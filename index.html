@@ -23,7 +23,7 @@
       const { useState, useEffect } = React;
 
       const CharacterCounter = () => {
-        const [text, setText] = useState("");
+        const [text, setText] = useState("S3 storage units work by ");
         const [isPro, setIsPro] = useState(false);
         const baseLength = 250;
         const proLength = 1000;
@@ -77,7 +77,7 @@
                 className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-32"
                 value={text}
                 onChange={handleTextChange}
-                placeholder="Type your answer here..."
+                placeholder="S3 storage units work by..."
                 rows={5}
                 style={{
                   resize: "none",
@@ -126,8 +126,8 @@
 
             {isAtLimit && !isPro && (
               <div className="mt-2 flex items-center justify-between gap-4">
-                <div className="flex items-center text-sm text-gray-600">
-                  <div className="flex-shrink-0 w-4 h-4 mr-2">
+                <div className="text-sm text-gray-500 flex items-center gap-2">
+                  <div className="flex-shrink-0 w-4 h-4">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
@@ -141,30 +141,27 @@
                     </svg>
                   </div>
                   <span>Character limit reached.</span>
+                  <button
+                    onClick={() => setIsPro(true)}
+                    className="text-black hover:text-gray-700 font-medium inline-flex items-center gap-1 whitespace-nowrap"
+                  >
+                    <span>Upgrade to Pro</span>
+                  </button>
                 </div>
-                <button
-                  onClick={() => setIsPro(true)}
-                  className="text-black hover:text-gray-700 font-medium whitespace-nowrap flex items-center gap-1"
-                >
-                  <span>Upgrade to Pro</span>
-                </button>
               </div>
             )}
 
             {!isPro && !isAtLimit && (
               <div className="mt-2 flex items-center justify-between gap-4">
-                <div className="text-sm text-gray-500">
-                  <span className="flex flex-col">
-                    <span>Need more space?</span>
-                    <span>Raise your limits to 1000 characters.</span>
-                  </span>
+                <div className="text-sm text-gray-500 flex items-center gap-2">
+                  <span>Need more space?</span>
+                  <button
+                    onClick={() => setIsPro(true)}
+                    className="text-black hover:text-gray-700 font-medium inline-flex items-center gap-1 whitespace-nowrap"
+                  >
+                    <span>Upgrade to Pro</span>
+                  </button>
                 </div>
-                <button
-                  onClick={() => setIsPro(true)}
-                  className="text-black hover:text-gray-700 font-medium inline-flex items-center gap-1 whitespace-nowrap"
-                >
-                  <span>Upgrade to Pro</span>
-                </button>
               </div>
             )}
           </div>
