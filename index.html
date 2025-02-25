@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Character Counter Demo</title>
+
+    <!-- Include Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Include React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Include Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div id="root"></div>
+
+    <!-- Your React component -->
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      const CharacterCounter = () => {
+        const [text, setText] = useState("");
+        const [isPro, setIsPro] = useState(false);
+        const baseLength = 250;
+        const proLength = 1000;
+        const maxLength = isPro ? proLength : baseLength;
+        const charactersUsed = text.length;
+        const charactersLeft = maxLength - charactersUsed;
+        const isNearLimit = charactersLeft <= Math.floor(maxLength * 0.2);
+        const isAtLimit = charactersLeft <= 0;
+
+        const progress = Math.min(charactersUsed / maxLength, 1);
+
+        const getCircleColor = () => {
+          if (isAtLimit) return "#FF3B30";
+          if (isNearLimit) return "#FFCC00";
+          return "#1B1918";
+        };
+
+        const [showPulse, setShowPulse] = useState(false);
+
+        useEffect(() => {
+          if (isAtLimit) {
+            setShowPulse(true);
+            const timer = setTimeout(() => setShowPulse(false), 1000);
+            return () => clearTimeout(timer);
+          }
+        }, [isAtLimit, charactersUsed]);
+
+        const handleTextChange = (e) => {
+          const newText = e.target.value;
+          if (newText.length <= maxLength) {
+            setText(newText);
+          }
+        };
+
+        return (
+          <div className="w-full max-w-2xl mx-auto p-6 bg-gray-50 rounded-lg shadow-sm">
+            <div className="mb-4">
+              <label className="block text-xl font-semibold text-gray-800 mb-2">
+                What do you think?
+              </label>
+              <p className="text-gray-600 mb-4">
+                Explain your understanding of how S3 storage units work. Be sure
+                to include the core underlying concepts that are explained in
+                the readings that you have been provided with. Filler text to
+                here should do the trick.
+              </p>
+            </div>
+
+            <div className="relative">
+              <textarea
+                className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-32"
+                value={text}
+                onChange={handleTextChange}
+                placeholder="Type your answer here..."
+                rows={5}
+                style={{
+                  resize: "none",
+                  lineHeight: "1.5",
+                  paddingTop: "calc(32px - 0.75em)",
+                }}
+              />
+
+              <div className="absolute bottom-4 right-4 flex items-center">
+                <div
+                  className={`relative w-10 h-10 ${
+                    showPulse ? "animate-pulse" : ""
+                  } rounded-full bg-white/90`}
+                >
+                  <svg className="w-full h-full" viewBox="0 0 36 36">
+                    <path
+                      d="M18 2.5a15.5 15.5 0 100 31 15.5 15.5 0 000-31z"
+                      fill="none"
+                      stroke="#E7E5E4"
+                      strokeWidth="3"
+                    />
+
+                    <path
+                      d="M18 2.5a15.5 15.5 0 100 31 15.5 15.5 0 000-31z"
+                      fill="none"
+                      stroke={getCircleColor()}
+                      strokeWidth="3"
+                      strokeDasharray="100"
+                      strokeDashoffset={-(100 - progress * 100)}
+                      strokeLinecap="round"
+                      transform="rotate(0 18 18)"
+                    />
+                  </svg>
+
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ color: getCircleColor() }}
+                  >
+                    <span className="text-sm font-medium">
+                      {charactersLeft}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isAtLimit && !isPro && (
+              <div className="mt-2 flex items-center justify-between gap-4">
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="flex-shrink-0 w-4 h-4 mr-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <span>Character limit reached.</span>
+                </div>
+                <button
+                  onClick={() => setIsPro(true)}
+                  className="text-black hover:text-gray-700 font-medium whitespace-nowrap flex items-center gap-1"
+                >
+                  <span>Upgrade to Pro</span>
+                </button>
+              </div>
+            )}
+
+            {!isPro && !isAtLimit && (
+              <div className="mt-2 flex items-center justify-between gap-4">
+                <div className="text-sm text-gray-500">
+                  <span className="flex flex-col">
+                    <span>Need more space?</span>
+                    <span>Raise your limits to 1000 characters.</span>
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsPro(true)}
+                  className="text-black hover:text-gray-700 font-medium inline-flex items-center gap-1 whitespace-nowrap"
+                >
+                  <span>Upgrade to Pro</span>
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // Render the component
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<CharacterCounter />);
+    </script>
+  </body>
+</html>
